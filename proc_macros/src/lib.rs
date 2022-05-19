@@ -6,20 +6,18 @@ use quote::{quote, ToTokens};
 pub fn api(attr: TokenStream, input: TokenStream) -> TokenStream {
     let mut output: TokenStream2 = input.clone().into();
     let mut ast = syn::parse_macro_input!(input as syn::ItemStruct);
-
+    
     let mut impl_block = TokenStream2::new();
-    let mut new_fields = 
 
     if let syn::Fields::Named(syn::FieldsNamed { mut named, .. }) = ast.fields {
-        for field in named.iter() {
+        for field in named.iter_mut() {
             let ident = field.ident.as_ref().unwrap();
             let ftype = field.ty.clone();
             let get_func_name: TokenStream2 = format!("get_{}", ident).parse().unwrap();
 
-            for attr in &field.attrs{
+            for attr in &mut field.attrs {
                 match attr.path.segments[0].ident.to_string().as_str() {
-                    "api" => {
-                    }
+                    "api" => {}
                     _ => {}
 
                 }
