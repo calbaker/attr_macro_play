@@ -4,13 +4,12 @@ use quote::{quote, ToTokens};
 
 #[proc_macro_attribute]
 pub fn api(attr: TokenStream, input: TokenStream) -> TokenStream {
-    let mut output: TokenStream2 = input.clone().into();
     let mut ast = syn::parse_macro_input!(input as syn::ItemStruct);
-    println!("{}", ast);
+    // println!("{:?}", ast.to_token_stream());
 
     let mut impl_block = TokenStream2::new();
 
-    if let syn::Fields::Named(syn::FieldsNamed { mut named, .. }) = ast.fields {
+    if let syn::Fields::Named(syn::FieldsNamed { named, .. }) = &mut ast.fields {
         for field in named.iter_mut() {
             let ident = field.ident.as_ref().unwrap();
             let ftype = field.ty.clone();
@@ -34,6 +33,7 @@ pub fn api(attr: TokenStream, input: TokenStream) -> TokenStream {
                 })
                 .collect();
             let mut iter = keep.iter();
+            println!("{:?}", keep);
 
             field.attrs.retain(|_| *iter.next().unwrap());
 
@@ -46,14 +46,21 @@ pub fn api(attr: TokenStream, input: TokenStream) -> TokenStream {
         }
     };
 
-    let ident = ast.ident;
+    let ident = &ast.ident;
     let impl_block = quote! {
         impl #ident {
             #impl_block
         }
     };
 
+    let mut output: TokenStream2 = ast.to_token_stream();
+
     output.extend(impl_block);
-    println!("{}", output);
+    // println!(
+    //     "
+    // final output {}",
+    //     "*".to_string().repeat(25)
+    // );
+    // println!("{}", output);
     output.into()
 }

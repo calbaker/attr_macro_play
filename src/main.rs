@@ -4,7 +4,7 @@ use proc_macros::api;
 #[api]
 pub struct MyStruct {
     pub x: i32,
-    // #[api(skip)]
+    #[api(skip)]
     pub y: i32,
 }
 
