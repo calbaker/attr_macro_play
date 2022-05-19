@@ -15,14 +15,23 @@ pub fn api(attr: TokenStream, input: TokenStream) -> TokenStream {
             let ftype = field.ty.clone();
             let get_func_name: TokenStream2 = format!("get_{}", ident).parse().unwrap();
 
-            for attr in &mut field.attrs {
-                match attr.path.segments[0].ident.to_string().as_str() {
-                    "api" => {}
-                    _ => {}
+            // for attr in &mut field.attrs {
+            //     match attr.path.segments[0].ident.to_string().as_str() {
+            //         "api" => {}
+            //         _ => {}
 
-                }
+            //     }
     
-            }
+            // }
+
+            let keep: Vec<bool> = field.attrs.iter().map(|x| match x.path.segments[0].ident.to_string().as_str() {
+                "api" => {false}
+                _ => {true}
+            }).collect();
+            let mut iter = keep.iter();
+
+            field.attrs.retain(|_| *iter.next().unwrap());
+
             let get_block = quote! {
                 pub fn #get_func_name(&self) -> &#ftype {
                     &self.#ident
