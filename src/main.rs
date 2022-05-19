@@ -11,5 +11,5 @@ pub struct MyStruct {
 fn main() {
     let s = MyStruct { x: 5, y: 10 };
     println!("x is {}", s.get_x());
-    println!("y is {}", s.get_y());
+    // println!("y is {}", s.get_y()); // this method does not get generated
 }

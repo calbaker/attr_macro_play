@@ -24,11 +24,16 @@ pub fn api(attr: TokenStream, input: TokenStream) -> TokenStream {
 
             // }
 
+            let mut skip_get = false;
+
             let keep: Vec<bool> = field
                 .attrs
                 .iter()
                 .map(|x| match x.path.segments[0].ident.to_string().as_str() {
-                    "api" => false,
+                    "api" => {
+                        skip_get = true;
+                        false
+                    }
                     _ => true,
                 })
                 .collect();
@@ -37,12 +42,14 @@ pub fn api(attr: TokenStream, input: TokenStream) -> TokenStream {
 
             field.attrs.retain(|_| *iter.next().unwrap());
 
-            let get_block = quote! {
-                pub fn #get_func_name(&self) -> &#ftype {
-                    &self.#ident
-                }
-            };
-            impl_block.extend::<TokenStream2>(get_block);
+            if !skip_get {
+                let get_block = quote! {
+                    pub fn #get_func_name(&self) -> &#ftype {
+                        &self.#ident
+                    }
+                };
+                impl_block.extend::<TokenStream2>(get_block);
+            }
         }
     };
 
