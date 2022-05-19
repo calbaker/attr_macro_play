@@ -15,15 +15,6 @@ pub fn api(attr: TokenStream, input: TokenStream) -> TokenStream {
             let ftype = field.ty.clone();
             let get_func_name: TokenStream2 = format!("get_{}", ident).parse().unwrap();
 
-            // for attr in &mut field.attrs {
-            //     match attr.path.segments[0].ident.to_string().as_str() {
-            //         "api" => {}
-            //         _ => {}
-
-            //     }
-
-            // }
-
             let mut skip_get = false;
 
             let keep: Vec<bool> = field
