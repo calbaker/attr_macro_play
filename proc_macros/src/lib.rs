@@ -6,7 +6,8 @@ use quote::{quote, ToTokens};
 pub fn api(attr: TokenStream, input: TokenStream) -> TokenStream {
     let mut output: TokenStream2 = input.clone().into();
     let mut ast = syn::parse_macro_input!(input as syn::ItemStruct);
-    
+    println!("{}", ast);
+
     let mut impl_block = TokenStream2::new();
 
     if let syn::Fields::Named(syn::FieldsNamed { mut named, .. }) = ast.fields {
@@ -21,13 +22,17 @@ pub fn api(attr: TokenStream, input: TokenStream) -> TokenStream {
             //         _ => {}
 
             //     }
-    
+
             // }
 
-            let keep: Vec<bool> = field.attrs.iter().map(|x| match x.path.segments[0].ident.to_string().as_str() {
-                "api" => {false}
-                _ => {true}
-            }).collect();
+            let keep: Vec<bool> = field
+                .attrs
+                .iter()
+                .map(|x| match x.path.segments[0].ident.to_string().as_str() {
+                    "api" => false,
+                    _ => true,
+                })
+                .collect();
             let mut iter = keep.iter();
 
             field.attrs.retain(|_| *iter.next().unwrap());
